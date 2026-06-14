@@ -56,6 +56,22 @@ class GerenciadorIcone:
             print("Erro ao carregar ícone:", e)
 
 class PopupSobre(tk.Toplevel):
+
+    #---------------Bloco para tratar múltiplas janelas---------------
+    instancia = None
+
+    @classmethod
+    def mostrar(cls, master):
+
+        if cls.instancia is not None:
+            if cls.instancia.winfo_exists():
+                cls.instancia.focus_force()
+                return cls.instancia
+
+        cls.instancia = cls(master)
+        return cls.instancia
+    #-----------------------------------------------------------------
+
     def __init__(self, master):
         super().__init__(master)
 
@@ -139,6 +155,7 @@ class PopupSobre(tk.Toplevel):
         )
 
     def fecha_popup(self):
+        PopupSobre.instancia = None
         self.destroy()
 
 class Interface(ctk.CTk):
@@ -203,7 +220,7 @@ class Interface(ctk.CTk):
             rely=0.023,
             anchor=ctk.NE
         )
-        self.info_sobre.bind("<Button-1>", lambda e: PopupSobre(self))  # abre janela popup
+        self.info_sobre.bind("<Button-1>", lambda e: PopupSobre.mostrar(self))  # abre janela popup
 
         # Instância da classe de carregamento:
         self.loader = CarregarArquivo()
